@@ -3,22 +3,22 @@ import {
   apiUseDeviceControlSignalR,
   apiUseSiteData
 } from '../componentApi/index';
-
-import { onMounted } from 'vue';
-
 const { connectionAction } = apiUseDeviceControlSignalR();
 const { getUdiConnectionKey, getSiteList, getSiteOrderType } = apiUseSiteData();
-
 onMounted(async () => {
-  getSiteList();
+  await getSiteList();
   getSiteOrderType();
   await getUdiConnectionKey();
   connectionAction();
 });
 </script>
-
 <template>
-  <RouterView />
+  <div class="tw-flex tw-justify-center">
+    <Global_Menu />
+    <div class="tw-flex-1 tw-overflow-auto">
+      <RouterView />
+    </div>
+  </div>
 </template>
 
 <style scoped></style>

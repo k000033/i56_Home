@@ -6,10 +6,12 @@ export const useSiteStore = defineStore('siteStore', () => {
   const udiKey = ref([]);
   const siteOrderType = ref([]);
   const siteList = ref([]);
+  const siteGrid = ref([]);
   return {
     siteDeviceList,
     udiKey,
     siteOrderType,
-    siteList
+    siteList,
+    siteGrid
   };
 });

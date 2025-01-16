@@ -5,4 +5,9 @@
 html,body{
   background: black;
   height: 100%;
+  overflow:hidden
+}
+
+.el-progress-circle {
+  width: 50px !important;
 }

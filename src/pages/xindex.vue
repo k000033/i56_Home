@@ -36,7 +36,7 @@ const { getPCSites, getDCSites } = apiUseSiteUI();
           :key="device"
           class="tw-border tw-border-gray-700"
         >
-          <siteContain :deviceKey="device" />
+          <!-- <siteContain :deviceKey="device" /> -->
         </div>
       </div>
     </div>

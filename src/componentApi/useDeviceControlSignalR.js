@@ -1,21 +1,20 @@
 import * as signalR from '@microsoft/signalr';
 import axios from 'axios';
-import { useSiteStore } from '../stores/siteStore';
-import { storeToRefs } from 'pinia';
 import { apiUseSiteData } from './index';
 export const useDeviceControlSignalR = () => {
-  const siteStore = useSiteStore();
-  const { siteDeviceList } = storeToRefs(siteStore);
-
-  const { udiKey } = apiUseSiteData();
+  const { udiKey, siteDeviceList } = apiUseSiteData();
   /**
    * 測試 URL
    */
-  window.origin = 'http://localhost:5119';
-
+  // window.origin = 'http://localhost:5119';
+  window.origin = 'http://192.168.116.166';
+  window.origin = `${window.origin}/signalR/all_udi`;
   const signalRAPI = `${window.origin}/SignalRServer`;
   const getDeviceControlAPI = `${window.origin}/api/Device/GetDeviceControl`;
   const getUdiBreathingAPI = `${window.origin}/api/Device/GetUdiBreathing`;
+  const GetUnDoneState = `${window.origin}/api/Device/GetUnDoneState`;
+  const GetDeviceError = `${window.origin}/api/Device/GetDeviceError`;
+  // const GetDeviceLastResultTime = `${window.origin}/api/Device/GetDeviceLastResultTime`;
   // 設定連線
   var connection = new signalR.HubConnectionBuilder()
     .withUrl(signalRAPI, {
@@ -81,7 +80,45 @@ export const useDeviceControlSignalR = () => {
         }
       })
       .then((res) => {
-        if (res.data.rtN_CODE != 1) {
+        if (res.data.RTN_CODE != 1) {
+          return res.data;
+        } else {
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  //取得呼吸登資料;
+  const getUnDoneState = (dbName) => {
+    return axios
+      .get(GetUnDoneState, {
+        params: {
+          DBName: dbName
+        }
+      })
+      .then((res) => {
+        if (res.data.RTN_CODE != 1) {
+          return res.data;
+        } else {
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  //取得設備錯誤資料
+  const getDeviceError = (dbName) => {
+    return axios
+      .get(GetDeviceError, {
+        params: {
+          DBName: dbName
+        }
+      })
+      .then((res) => {
+        if (res.data.RTN_CODE != 1) {
           return res.data;
         } else {
         }
@@ -93,61 +130,53 @@ export const useDeviceControlSignalR = () => {
 
   // 取得 跑迴圈取得各廠區的資料
   const getData = async () => {
-    const siteIds = ['PC5_UDI', 'DC5_UDI', 'DC7_UDI'];
-
     for (var key of udiKey.value) {
-      if (!siteDeviceList.value.has(key)) {
-        siteDeviceList.value.set(key, new Map());
+      const id = key.split('_')[0];
+      if (!siteDeviceList.value.has(id)) {
+        siteDeviceList.value.set(id, new Map());
       }
 
-      const diviceControl = await getDeviceControl(key);
-      siteDeviceList.value.get(key).set('divControl', diviceControl);
-
-      const udiBreathing = await getUdiBreathing(key);
-      siteDeviceList.value.get(key).set('udiBreathing', udiBreathing);
-
       // 註冊 取得設備狀態
-      connection.on(`refreshDeviceControl_${key}`, (response) => {
+      const diviceControl = await getDeviceControl(key);
+      siteDeviceList.value.get(id).set('divControl', diviceControl);
+
+      connection.on(`refreshDeviceControl_${key}`, async (response) => {
         const res = JSON.parse(response);
-        console.log(res);
-        siteDeviceList.value.get(key).set('divControl', res);
+        siteDeviceList.value.get(id).set('divControl', res);
+
+        if (res == null) {
+          getDeviceControl(id + '_UDI');
+        }
       });
 
       // // 註冊 UDI呼吸燈
+      const udiBreathing = await getUdiBreathing(key);
+      siteDeviceList.value.get(id).set('udiBreathing', udiBreathing);
+
       connection.on(`refreshBreathing_${key}`, (response) => {
         const res = JSON.parse(response);
-        // console.log(res);
-        siteDeviceList.value.get(key).set('udiBreathing', res);
+        siteDeviceList.value.get(id).set('udiBreathing', res);
+      });
+
+      // // 註冊 未完成指令
+      const unDoneState = await getUnDoneState(key);
+      siteDeviceList.value.get(id).set('udiUnDoneState', unDoneState);
+
+      connection.on(`refreshUnDoneState_${key}`, (response) => {
+        const res = JSON.parse(response);
+        siteDeviceList.value.get(id).set('udiUnDoneState', res);
+      });
+
+      // 取得設備自動修復資料
+      const deviceError = await getDeviceError(key);
+      siteDeviceList.value.get(id).set('deviceError', deviceError);
+      console.log(deviceError);
+      connection.on(`refreshDeviceError_${key}`, (response) => {
+        const res = JSON.parse(response);
+        console.log(res);
+        siteDeviceList.value.get(id).set('deviceError', res);
       });
     }
-    // for (let i = 0; i < udiKey.value.length; i++) {
-    //   if (!siteDeviceList.value.has(siteIds[i])) {
-    //     siteDeviceList.value.set(siteIds[i], new Map());
-    //   }
-    //   console.log(siteDeviceList.value);
-    //   // 取得設備狀態
-    //   const diviceControl = await getDeviceControl(siteIds[i]);
-    //   console.log(diviceControl);
-    //   siteDeviceList.value.get(siteIds[i]).set('divControl', diviceControl);
-
-    //   // 取得呼吸登資料
-    //   const udiBreathing = await getUdiBreathing(siteIds[i]);
-
-    //   siteDeviceList.value.get(siteIds[i]).set('udiBreathing', udiBreathing);
-
-    //   // 註冊 取得設備狀態
-    //   connection.on(`refreshDeviceControl_${siteIds[i]}`, (response) => {
-    //     const res = JSON.parse(response);
-    //     siteDeviceList.value.get(siteIds[i]).set('divControl', res);
-    //   });
-
-    //   // 註冊 UDI呼吸燈
-    //   connection.on(`refreshBreathing_${siteIds[i]}`, (response) => {
-    //     const res = JSON.parse(response);
-    //     console.log(res);
-    //     siteDeviceList.value.get(siteIds[i]).set('udiBreathing', res);
-    //   });
-    // }
   };
 
   // 關閉頁籤的時候，取消事件註冊，中斷連線
@@ -162,7 +191,6 @@ export const useDeviceControlSignalR = () => {
   window.addEventListener('beforeunload', cleanupSignalR);
 
   return {
-    siteDeviceList,
     connectionAction,
     cleanupSignalR
   };
