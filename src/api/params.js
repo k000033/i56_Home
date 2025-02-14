@@ -1,5 +1,3 @@
 export class decMenuParams {
-  constructor() {
-    this.
-  }
+  constructor() {}
 }

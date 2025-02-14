@@ -51,12 +51,12 @@ const startTimer = (dateString) => {
   <div :class="['tw-h-full', { 'tw-bg-[#FFF4C2]': props.color == '#E00' }]">
     <div class="tw-w-full tw-h-full tw-flex tw-items-center tw-justify-center">
       <div
-        class="tw-px-2 tw-py-1 tw-text-sm tw-tracking-wide"
+        class="tw-px-1 tw-py-1 tw-text-sm tw-tracking-wide"
         :style="[{ color: props.color }]"
       >
         {{ props.content }}
       </div>
-      <div class="tw-px-2 tw-py-1 tw-text-xs" :style="[{ color: props.color }]">
+      <div class="tw-px-1 tw-py-1 tw-text-sm" :style="[{ color: props.color }]">
         {{ second }}
       </div>
     </div>

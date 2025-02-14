@@ -1,12 +1,16 @@
 <script setup>
+import { apiUseSiteData } from '../../componentApi/index';
 const route = useRoute();
 const router = useRouter();
+const { openDetal, detalId } = apiUseSiteData();
 const menuList = ref([
   { name: 'UDI', path: '/', idx: 'index' },
   { name: 'DCS', path: '/dcs', idx: 'dcs' }
 ]);
 
 const pageSwitch = (pageName) => {
+  openDetal.value = false;
+  detalId.value = '';
   router.push({ path: pageName });
 };
 </script>

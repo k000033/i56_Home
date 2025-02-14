@@ -4,6 +4,10 @@ export default {
   content: ['./src/**/*.{html,js,vue}'],
   theme: {
     extend: {
+      backgroundImage: {
+        'detail-bg':
+          "url('../../src/assets/img/docs-dark1.png')"
+      },
       fontFamily: {
         Noto: ['Noto Sans SC', 'serif'],
         fantasy: ['fantasy', 'serif']

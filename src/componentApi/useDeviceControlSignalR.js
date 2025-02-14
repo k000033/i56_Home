@@ -13,7 +13,7 @@ export const useDeviceControlSignalR = () => {
   const getDeviceControlAPI = `${window.origin}/api/Device/GetDeviceControl`;
   const getUdiBreathingAPI = `${window.origin}/api/Device/GetUdiBreathing`;
   const GetUnDoneState = `${window.origin}/api/Device/GetUnDoneState`;
-  const GetDeviceError = `${window.origin}/api/Device/GetDeviceError`;
+  const GetAutoRepairData = `${window.origin}/api/Device/GetAutoRepairData`;
   // const GetDeviceLastResultTime = `${window.origin}/api/Device/GetDeviceLastResultTime`;
   // 設定連線
   var connection = new signalR.HubConnectionBuilder()
@@ -110,9 +110,9 @@ export const useDeviceControlSignalR = () => {
   };
 
   //取得設備錯誤資料
-  const getDeviceError = (dbName) => {
+  const getAutoRepairData = (dbName) => {
     return axios
-      .get(GetDeviceError, {
+      .get(GetAutoRepairData, {
         params: {
           DBName: dbName
         }
@@ -168,13 +168,13 @@ export const useDeviceControlSignalR = () => {
       });
 
       // 取得設備自動修復資料
-      const deviceError = await getDeviceError(key);
-      siteDeviceList.value.get(id).set('deviceError', deviceError);
-      console.log(deviceError);
-      connection.on(`refreshDeviceError_${key}`, (response) => {
+      const getAutoRepair = await getAutoRepairData(key);
+      siteDeviceList.value.get(id).set('autoRepair', getAutoRepair);
+      console.log(getAutoRepair);
+      connection.on(`refreshAutoRepair_${key}`, (response) => {
         const res = JSON.parse(response);
         console.log(res);
-        siteDeviceList.value.get(id).set('deviceError', res);
+        siteDeviceList.value.get(id).set('autoRepair', res);
       });
     }
   };

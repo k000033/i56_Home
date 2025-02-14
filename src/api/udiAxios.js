@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const allDeviceStateSignalRAxios = axios.create({
-  baseURL: 'http://192.168.100.134/signalR/all_udi/api/Device/'
+  baseURL: 'http://192.168.116.166/signalR/all_udi/api/Device/'
   //baseURL: `${location.origin}/dcs/carryProject.ashx` //正式
 });
 
@@ -29,6 +29,33 @@ export const useGetSiteList = async () => {
 export const useGetSiteOrderType = async () => {
   try {
     const res = await allDeviceStateSignalRAxios.get('GetSiteOrderType');
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// 取得所有錯誤資料
+export const useGetUdiErrorData = async (dbName) => {
+  try {
+    const res = await allDeviceStateSignalRAxios.get('GetUdiErrorData', {
+      params: {
+        DBName: dbName
+      }
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+// 取得所有STATE資料
+export const useGetUdiStateData = async (dbName) => {
+  try {
+    const res = await allDeviceStateSignalRAxios.get('GetUdiStateData', {
+      params: {
+        DBName: dbName
+      }
+    });
     return res;
   } catch (error) {
     console.log(error);

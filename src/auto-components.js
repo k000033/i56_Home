@@ -7,10 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DCS_SiteList: typeof import('./components/DCS/DCS_SiteList.vue')['default']
+    Detail_Content: typeof import('./components/Detail/Detail_Content.vue')['default']
+    Detail_ErrorAgGrid: typeof import('./components/Detail/Detail_ErrorAgGrid.vue')['default']
+    Detail_Section: typeof import('./components/Detail/Detail_Section.vue')['default']
+    Detail_StateAgGrid: typeof import('./components/Detail/Detail_StateAgGrid.vue')['default']
     Device_AlertLight: typeof import('./components/Device/Device_AlertLight.vue')['default']
     Device_Content: typeof import('./components/Device/Device_Content.vue')['default']
-    Device_Content2: typeof import('./components/Device/Device_Content2.vue')['default']
-    Device_Detail: typeof import('./components/Device/Device_Detail.vue')['default']
     Device_Info: typeof import('./components/Device/Device_Info.vue')['default']
     Device_Light: typeof import('./components/Device/Device_Light.vue')['default']
     Device_Performance: typeof import('./components/Device/Device_Performance.vue')['default']

@@ -1,13 +1,13 @@
 import { apiUseSiteData } from './index';
+
 export const useSiteUI = () => {
-  const { siteList, siteDeviceList, siteOrderType, siteGrid } =
-    apiUseSiteData();
+  const { siteList, siteDeviceList, siteOrderType, detalId } = apiUseSiteData();
 
   // 取得廠區AP IP
-  const getSiteApServiceIP = (siteId) => {
-    const apServiceIP = siteList.value.find((x) => x.SITE_ID == siteId).AP_IP;
+  const getSiteApServiceIP = computed(() => {
+    const apServiceIP = siteList.value.find((x) => x.SITE_ID == detalId.value);
     return apServiceIP;
-  };
+  });
   // 取得廠區設備列表
   const getSiteDeviceList = (siteId) => {
     return siteDeviceList.value.get(siteId)?.get('divControl');
@@ -27,9 +27,14 @@ export const useSiteUI = () => {
     return res.filter((x) => x.OBJECT_ID == deviceId).length;
   };
 
+  const getUnDoneStateData = () => {
+    const res = siteDeviceList.value.get(detalId.value)?.get('udiUnDoneState');
+    return res;
+  };
+
   // 取得自動修復的數字
-  const getDeviceError = (siteId, deviceId) => {
-    const res = siteDeviceList.value.get(siteId)?.get('deviceError');
+  const getAutoRepair = (siteId, deviceId) => {
+    const res = siteDeviceList.value.get(siteId)?.get('autoRepair');
     if (!res) {
       return '';
     }
@@ -85,7 +90,7 @@ export const useSiteUI = () => {
     } else {
       return siteOrderType.value.filter(
         (x) => x.ID.split('_')[0] == siteId && x.TYPE == type
-      )[0].NAME;
+      )[0]?.NAME;
     }
   };
 
@@ -95,9 +100,10 @@ export const useSiteUI = () => {
     getSiteDeviceState,
     workLight,
     getSiteBreathing,
-    getSiteApServiceIP,
     getUnDoneState,
     deviceBorderColor,
-    getDeviceError
+    getAutoRepair,
+    getSiteApServiceIP,
+    getUnDoneStateData
   };
 };

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const dcsAxios = axios.create({
-  baseURL: 'http://localhost/work/carryProject.ashx' //測試
+  //baseURL: 'http://localhost/work/carryProject.ashx' //測試
 
-  //baseURL: `${location.origin}/dcs/carryProject.ashx` //正式
+  baseURL: `${location.origin}/dcs/carryProject.ashx` //正式
 });
 
 export const getDcsMenuAxios = (params) => {

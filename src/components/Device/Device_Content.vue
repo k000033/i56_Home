@@ -11,9 +11,12 @@ const {
   diviceStatus,
   getSiteDeviceState,
   workLight,
-  getUnDoneState
+  getUnDoneState,
+  deviceBorderColor,
+  getAutoRepair
 } = apiUseSiteUI();
 const { repairErrorAction } = apiUseSiteData();
+
 // 廠區的設備清單
 const siteDeviceList = computed(() => {
   const res = getSiteDeviceList(props.siteId);
@@ -27,178 +30,120 @@ const showContent = computed(() => {
   }
 });
 
-const showRepair = (alarm) => {
-  if (alarm.trim() != '#300') {
-    return true;
-  }
+const toFixed = (num) => {
+  return parseFloat(num).toFixed(0);
 };
 
-const repairError = async (deviceId, orderID) => {
-  await repairErrorAction(props.siteId, deviceId, orderID);
-};
+const alertBgColor = computed(() => {
+  return getDeviceError(props.siteId, device.DEVICE_ID) > 0
+    ? '#e6df3c'
+    : '#030';
+});
 
-// #1E90FF
+const switchInfo = ref(true);
+onMounted(() => {
+  setInterval(() => {
+    switchInfo.value = !switchInfo.value;
+  }, 8000);
+});
 </script>
 <template>
-  <div
-    :class="[
-      'tw-h-[calc(100%-40px)]',
-      'tw-flex',
-      'tw-flex-wrap',
-      {
-        ' tw-bg-slate-200/10': showContent && props.siteId != ''
-      }
-    ]"
-  >
-    <template v-if="showContent && props.siteId != ''">
-      <h1
-        class="tw-w-full tw-flex tw-justify-center tw-items-center tw-text-6xl tw-text-slate-600"
-      >
+  <div :class="[
+    'tw-h-[calc(100%-40px)]',
+    'tw-flex',
+    'tw-flex-wrap',
+    'tw-gap-[4px]',
+    'tw-relative'
+  ]">
+    <template v-if="showContent">
+      <h1 class="tw-w-full tw-flex tw-justify-center tw-items-center tw-text-6xl tw-text-slate-600 tw-bg-slate-800/60">
         <span class="tw-tracking-widest">未上線</span>
       </h1>
     </template>
 
     <template v-if="!showContent">
-      <div
-        :class="[
-          'tw-text-white',
-          'tw-h-[calc(100%/2)]',
-          'tw-w-1/2',
-          'tw-flex',
-          'tw-flex-col',
-          'tw-border-[#1E90FF]/50',
-          'tw-border-dashed',
+      <div :class="[
+        'tw-text-white',
+        'tw-h-[calc(100%/2-4px)]',
+        'tw-w-[calc(100%/2-4px)]',
+        'tw-flex',
+        'tw-flex-col',
+        'tw-border',
+        { ' tw-ring-2 tw-ring-[#e00]': deviceBorderColor(device.BREATHING_ALARM) == '#E00' }
+      ]" :style="[{ borderColor: deviceBorderColor(device.BREATHING_ALARM) }]"
+        v-for="(device, index) in siteDeviceList" :key="device.DEVICE_ID">
+        <!-- 標題 -->
+        <div :class="[
+          'tw-bg-[#222]  tw-flex tw-justify-between tw-items-center',
           {
-            'tw-border-b': index < 2,
-            'tw-border-l': index % 2 != 0
+            ' !tw-bg-[#064]': diviceStatus(device.STATE) == '#0e0'
           }
-        ]"
-        v-for="(device, index) in siteDeviceList"
-        :key="device"
-      >
-        <div class="tw-flex tw-h-[95px]">
-          <div
-            class="tw-h-full tw-w-[130px] tw-relative tw-flex tw-justify-center tw-items-center tw-flex-col"
-          >
-            <!-- 設備名稱 -->
-            <span
-              class="tw-bg-blue-600 tw-font-bold tw-tracking-widest tw-absolute tw-top-1 tw-text-base tw-px-2 tw-rounded-md"
-              >{{ device.DEVICE_ID }}
-            </span>
-            <!-- 設備ICON -->
-            <SvgIcon
-              name="computer"
-              :fill="diviceStatus(device.STATE)"
-              class="tw-absolute tw-top-4"
-            />
-            <!-- 完成率 -->
-            <span
-              :class="['tw-absolute', 'tw-top-[47px]']"
-              :style="{ color: diviceStatus(device.STATE) }"
-            >
-              {{ device.QTY_RATE }}%
-            </span>
-
-            <div
-              v-show="showRepair(device.BREATHING_ALARM)"
-              class="tw-absolute tw-top-0 tw-ml-[1px] tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center"
-            >
-              <h1 class="tw-bg-red-700 tw-px-[0.35rem] tw-py-[0.6rem] tw-mt-6">
-                <span class="tw-animate-fade">ERROR</span>
-              </h1>
-            </div>
-          </div>
-
-          <div class="tw-pt-[5px]">
+        ]">
+          <!-- 設備名稱 -->
+          <span :class="['tw-pl-2', 'tw-text-lg', 'tw-tracking-wider']">
+            {{ device.DEVICE_ID }}</span>
+          <!-- 批次，執行動作 -->
+          <div>
             <!-- 批次 -->
-            <div class="tw-flex tw-items-center">
-              <span class="tw-text-[#CCCCCC]/50 tw-text-sm tw-w-[40px]">
-                批次
-              </span>
-              <span class="tw-text-[#CCCCCC] tw-text-base tw-font-bold">
-                {{ device.ORDER_ID }}
-              </span>
-            </div>
-            <!-- 波次 -->
-            <div class="tw-flex tw-items-center">
-              <span class="tw-text-[#CCCCCC]/50 tw-text-sm tw-w-[40px]"
-                >波次
-              </span>
-              <span class="tw-text-[#CCCCCC] tw-text-base tw-font-bold">
-                {{ device.DESCRIPTION }}
-              </span>
-            </div>
-            <!-- 工單 -->
-            <div class="tw-flex tw-items-center">
-              <span class="tw-text-[#CCCCCC]/50 tw-text-sm tw-w-[40px]"
-                >工單
-              </span>
-              <span class="tw-text-[#CCCCCC] tw-text-base tw-font-bold">
-                {{ device.WO_ASSIGN }}
-              </span>
-            </div>
-            <div class="tw-flex tw-items-center">
-              <span class="tw-text-[#CCCCCC]/50 tw-text-sm tw-w-[40px]"
-                >指令
-              </span>
-              <span
-                :class="[
-                  'tw-text-[#CCCCCC] tw-text-base tw-font-bold',
-                  {
-                    'tw-text-red-600':
-                      getUnDoneState(props.siteId, device.DEVICE_ID) > 1
-                  }
-                ]"
-              >
-                {{ getUnDoneState(props.siteId, device.DEVICE_ID) }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="tw-relative tw-top-1 tw-flex tw-items-center tw-h-[24px]">
-          <!-- 指示燈號 -->
-          <div class="tw-w-[130px] tw-flex tw-justify-center tw-items-center">
-            <div
-              class="tw-w-10 tw-h-[12px] tw-rounded tw-ring-2 tw-ring-offset-0 tw-ring-black tw-shadow-inner tw-shadow-black/30"
-              :style="[
-                {
-                  backgroundColor: workLight(
-                    device.BREATHING_LIGHT,
-                    device.BREATHING_ALARM
-                  )
-                }
-              ]"
-            >
-              <SvgIcon
-                v-show="showRepair(device.BREATHING_ALARM)"
-                name="repaire"
-                fill="#fff"
-                @click="repairError(device.DEVICE_ID, device.ORDER_ID)"
-              />
-            </div>
-          </div>
-          <!-- 指示名稱 -->
-          <div
-            :style="[
-              {
-                color: workLight(device.BREATHING_LIGHT, device.BREATHING_ALARM)
-              }
-            ]"
-            class="tw-text-base tw-font-semibold tw-tracking-wider"
-          >
-            {{
-              getSiteDeviceState(
+            <span v-show="device.ORDER_TIME == ''" class="tw-text-xs tw-pr-2">{{
+              device.ORDER_ID
+            }}</span>
+            <!-- 執行動作 -->
+            <div v-show="!device.ORDER_TIME == ''" class="">
+              <Device_Performance :content="getSiteDeviceState(
                 props.siteId,
                 device.BREATHING_ORDER,
                 device.BREATHING_LIGHT,
                 device.BREATHING_ALARM
               )
-            }}
+                " :content2="device.ORDER_TIME" :color="workLight(device.BREATHING_LIGHT, device.BREATHING_ALARM)
+                  " />
+            </div>
+          </div>
+        </div>
+        <div class="tw-flex tw-h-full">
+          <!-- left -->
+          <div class="tw-w-[75%]">
+            <!-- 閃燈 -->
+            <div class="tw-px-2 tw-flex tw-items-center tw-gap-[10px]">
+              <Device_Light :title="'ON'" :bg="diviceStatus(device.STATE)" :qty="''" />
+              <Device_Light :title="'CMD'" :bg="workLight(device.BREATHING_LIGHT, device.BREATHING_ALARM)"
+                :qty="`${getUnDoneState(props.siteId, device.DEVICE_ID)}`" />
+              <Device_Light :title="'Mtn'" :bg="'#030'" :qty="``" />
+              <Device_Light :title="'Rdx'" :bg="'#030'" :qty="``" />
+              <Device_Light :title="'LPE'" :bg="'#030'" :qty="``" />
+              <Device_Light :title="'Ver'" :bg="'#030'" :qty="``" />
+              <Device_AlertLight :title="'Err'" :qty="`${getAutoRepair(props.siteId, device.DEVICE_ID)}`" />
+            </div>
+            <!-- 訊息 -->
+            <div :class="[
+              'tw-h-[calc(100%-32px)]',
+              { ' tw-opacity-40': diviceStatus(device.STATE) != '#0e0' }
+            ]">
+              <div class="tw-relative tw-h-full">
+                <div>
+                  <div v-show="switchInfo">
+                    <Device_Info :content="device.B_TIME" :color="'#117640'" :title="'啟動'" />
+                    <Device_Info :content="''" :color="'#a16b29'" :title="'回收'" />
+                  </div>
+
+                  <div v-show="!switchInfo">
+                    <Device_Info :content="device.DESCRIPTION" :color="'#143299'" :title="'波次'" />
+                    <Device_Info :content="`${device.WO_ASSIGN}`" :color="'#771499'" :title="'工單'" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 進度 -->
+          <div class="tw-flex-grow tw-flex tw-justify-around tw-bg-[#1A1A1A]">
+            <Device_Progress :rate="toFixed(device.WO_RATE)" :title="'WO'" />
+            <Device_Progress :rate="toFixed(device.QTY_RATE)" :title="'WQ'" />
           </div>
         </div>
       </div>
     </template>
   </div>
 </template>
+
 <style scoped></style>

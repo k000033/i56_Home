@@ -2,12 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body{
+html,
+body {
   background: black;
   height: 100%;
-  overflow:hidden
+  overflow: hidden;
 }
 
 .el-progress-circle {
   width: 50px !important;
+}
+
+.autoRepair {
+  color: goldenrod !important;
+}
+
+.ag-floating-filter-button {
+  display: none;
 }

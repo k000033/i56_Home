@@ -3,13 +3,21 @@ import {
   apiUseGetUdiConnectionKey,
   apiUseGetSiteList,
   apiUseGetSiteOrderType,
-  apiUseRepairError
+  apiUseRepairError,
+  apiUseGetUdiErrorData,
+  apiUseGetUdiStateData
 } from '../api/index';
 import { useSiteStore } from '../stores/siteStore';
 export const useSiteData = () => {
   const siteStore = useSiteStore();
-  const { udiKey, siteOrderType, siteList, siteDeviceList, siteGrid } =
-    storeToRefs(siteStore);
+  const {
+    udiKey,
+    siteOrderType,
+    siteList,
+    siteDeviceList,
+    openDetal,
+    detalId
+  } = storeToRefs(siteStore);
 
   // 取得 所有 廠區UDI 連接字串
   const getUdiConnectionKey = async () => {
@@ -39,15 +47,30 @@ export const useSiteData = () => {
     await apiUseRepairError(siteId, deviceId, orderId);
   };
 
+  const getUdiErrorData = async () => {
+    const key = detalId.value + '_UDI';
+    const res = await apiUseGetUdiErrorData(key);
+    return res.data;
+  };
+
+  const getUdiStateData = async () => {
+    const key = detalId.value + '_UDI';
+    const res = await apiUseGetUdiStateData(key);
+    return res.data;
+  };
+
   return {
     siteList,
     udiKey,
     siteDeviceList,
     siteOrderType,
-    siteGrid,
     getUdiConnectionKey,
     getSiteList,
     getSiteOrderType,
-    repairErrorAction
+    repairErrorAction,
+    openDetal,
+    detalId,
+    getUdiErrorData,
+    getUdiStateData
   };
 };
