@@ -1,11 +1,12 @@
 import { apiUseSiteData } from './index';
 
 export const useSiteUI = () => {
-  const { siteList, siteDeviceList, siteOrderType, detalId } = apiUseSiteData();
+  const { siteList, siteDeviceList, siteOrderType, detailId } =
+    apiUseSiteData();
 
   // 取得廠區AP IP
   const getSiteApServiceIP = computed(() => {
-    const apServiceIP = siteList.value.find((x) => x.SITE_ID == detalId.value);
+    const apServiceIP = siteList.value.find((x) => x.SITE_ID == detailId.value);
     return apServiceIP;
   });
   // 取得廠區設備列表
@@ -27,8 +28,20 @@ export const useSiteUI = () => {
     return res.filter((x) => x.OBJECT_ID == deviceId).length;
   };
 
+  const getQueueOrderQty = (siteId, deviceId) => {
+    const res = siteDeviceList.value.get(siteId)?.get('queueOrder');
+    if (!res) {
+      return 0;
+    }
+    const qty = res.find((x) => x.OBJECT_ID == deviceId);
+    if (!qty) {
+      return 0;
+    }
+    return qty.QUEUE_COUNT;
+  };
+
   const getUnDoneStateData = () => {
-    const res = siteDeviceList.value.get(detalId.value)?.get('udiUnDoneState');
+    const res = siteDeviceList.value.get(detailId.value)?.get('udiUnDoneState');
     return res;
   };
 
@@ -45,18 +58,18 @@ export const useSiteUI = () => {
     return res.filter((x) => x.DEVICE_ID == deviceId).length;
   };
 
-  // 設備的狀態，開啟 #030、關閉 #0e0、處理中 yellow
+  // 設備標題Style ，表示開啟、關閉 、處理中
   const diviceStatus = (state) => {
     if (!state) {
       return '#aaa';
     }
     switch (state) {
       case 2: // 關閉
-        return '#030';
+        return 'background:#030;color:#666';
       case 1: // 開啟
-        return '#0e0';
+        return 'background:#0a0;color:#fff';
       default: // 處理中
-        return 'yellow';
+        return 'background:#ff0;color:#222';
     }
   };
 
@@ -104,6 +117,7 @@ export const useSiteUI = () => {
     deviceBorderColor,
     getAutoRepair,
     getSiteApServiceIP,
-    getUnDoneStateData
+    getUnDoneStateData,
+    getQueueOrderQty
   };
 };

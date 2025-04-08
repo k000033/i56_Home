@@ -20,3 +20,43 @@ body {
 .ag-floating-filter-button {
   display: none;
 }
+
+.el-sub-menu__title,
+.el-menu,
+.el-menu-item {
+  background-color: rgb(8, 8, 8) !important;
+}
+
+.el-sub-menu.is-active .el-sub-menu__title {
+  color: #ffd700 !important;
+  /* border: none !important; */
+  border-bottom: 1px solid rgb(8, 8, 8) !important;
+}
+.el-menu-item.is-active {
+  color: #ffd700 !important;
+}
+
+.DCS_SiteMenu .el-sub-menu__title {
+  font-size: 20px !important;
+  padding: 0 10px !important;
+}
+
+.DCS_SiteMenu .el-sub-menu {
+  width: 150px !important;
+}
+
+:root {
+  --el-menu-horizontal-height: 40px !important;
+  --el-menu-bg-color: rgba(65, 65, 65, 0.4) !important;
+  --el-menu-border-color: rgba(65, 65, 65, 0.4) !important;
+  --el-border-color: rgba(65, 65, 65, 0.4) !important;
+  --el-border-color-light: rgba(65, 65, 65, 0.4) !important;
+  --el-tabs-header-height: 20px !important;
+}
+
+.el-sub-menu.is-opened .el-sub-menu__title {
+  background-color: #352f2f !important;
+}
+.el-menu-item:hover {
+  background-color: #352f2f !important;
+}

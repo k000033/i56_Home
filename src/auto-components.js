@@ -7,9 +7,12 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    DCS_SiteList: typeof import('./components/DCS/DCS_SiteList.vue')['default']
+    DCS_Iframe: typeof import('./components/DCS/DCS_Iframe.vue')['default']
+    DCS_SiteMenu: typeof import('./components/DCS/DCS_SiteMenu.vue')['default']
+    DCS_Tabs: typeof import('./components/DCS/DCS_Tabs.vue')['default']
     Detail_Content: typeof import('./components/Detail/Detail_Content.vue')['default']
     Detail_ErrorAgGrid: typeof import('./components/Detail/Detail_ErrorAgGrid.vue')['default']
+    Detail_Pie_Chart: typeof import('./components/Detail/Detail_Pie_Chart.vue')['default']
     Detail_Section: typeof import('./components/Detail/Detail_Section.vue')['default']
     Detail_StateAgGrid: typeof import('./components/Detail/Detail_StateAgGrid.vue')['default']
     Device_AlertLight: typeof import('./components/Device/Device_AlertLight.vue')['default']
@@ -18,6 +21,11 @@ declare module 'vue' {
     Device_Light: typeof import('./components/Device/Device_Light.vue')['default']
     Device_Performance: typeof import('./components/Device/Device_Performance.vue')['default']
     Device_Progress: typeof import('./components/Device/Device_Progress.vue')['default']
+    ElMenu: typeof import('element-plus/es')['ElMenu']
+    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     Global_Menu: typeof import('./components/Global/Global_Menu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

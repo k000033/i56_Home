@@ -2,16 +2,22 @@
 import { apiUseSiteData } from '../../componentApi/index';
 const route = useRoute();
 const router = useRouter();
-const { openDetal, detalId } = apiUseSiteData();
+const { openDetail, detailId } = apiUseSiteData();
 const menuList = ref([
   { name: 'UDI', path: '/', idx: 'index' },
   { name: 'DCS', path: '/dcs', idx: 'dcs' }
 ]);
 
 const pageSwitch = (pageName) => {
-  openDetal.value = false;
-  detalId.value = '';
-  router.push({ path: pageName });
+  openDetail.value = false;
+  detailId.value = '';
+
+  if (pageName == '/dcs') {
+    const routeData = router.resolve({ path: pageName });
+    window.open(routeData.href, '_blank');
+  } else {
+    router.push({ path: pageName });
+  }
 };
 </script>
 <template>

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const allDeviceStateSignalRAxios = axios.create({
   baseURL: 'http://192.168.116.166/signalR/all_udi/api/Device/'
-  //baseURL: `${location.origin}/dcs/carryProject.ashx` //正式
+  //baseURL: `${location.origin}/signalR/all_udi/api/Device/` //正式
 });
 
 // 取得 UDI 連接字串 KEY

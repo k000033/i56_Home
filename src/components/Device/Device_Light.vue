@@ -11,6 +11,10 @@ const props = defineProps({
   qty: {
     type: String,
     default: ''
+  },
+  style: {
+    type: String,
+    default: ''
   }
 });
 </script>
@@ -19,11 +23,9 @@ const props = defineProps({
     <span class="tw-text-[8pt]">{{ props.title }}</span>
     <div
       class="tw-w-5 tw-h-4 tw-bg-slate-200 tw-rounded-sm tw-border-[2px] tw-border-black/60 tw-flex tw-justify-center tw-items-center tw-text-[#f5deb3]"
-      :style="[{ 'background-color': props.bg }]"
-    >
+      :style="[props.style, { 'background-color': props.bg }]">
       <span v-show="props.qty > 0" :class="['tw-text-xs']">
-        {{ props.qty }}</span
-      >
+        {{ props.qty }}</span>
     </div>
   </div>
 </template>

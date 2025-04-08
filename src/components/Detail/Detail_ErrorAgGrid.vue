@@ -31,10 +31,10 @@ const props = defineProps({
 
 //欄位
 const colDefs = ref([
-  { field: 'LOG_TIME', headerName: 'LOG_TIME', maxWidth: 200 },
+  { field: 'LOG_TIME', headerName: 'LOG_TIME', maxWidth: 160 },
   { field: 'DEVICE_ID', headerName: 'DEVICE_ID', maxWidth: 100 },
   { field: 'ORDER_ID', headerName: 'ORDER_ID', maxWidth: 100 },
-  { field: 'MSG', headerName: 'MSG', maxWidth: 800 }
+  { field: 'MSG', headerName: 'MSG', flex: 1 }
 ]);
 
 // 預設欄位功能
@@ -45,8 +45,6 @@ const defaultColDef = ref({
 
 const onGridReady = async (params) => {
   window.uidErrorAgGridApi = params.api;
-  // 自動調整 Grid 大小
-  window.uidErrorAgGridApi.sizeColumnsToFit();
 };
 
 const getRowClass = (params) => {
@@ -54,11 +52,6 @@ const getRowClass = (params) => {
     return 'autoRepair';
   }
 };
-
-// 當螢幕大小發生變化，agGrid 自動調整大小
-window.addEventListener('resize', () => {
-  window?.uidErrorAgGridApi.sizeColumnsToFit();
-});
 </script>
 
 <template>
@@ -67,7 +60,7 @@ window.addEventListener('resize', () => {
     :columnDefs="colDefs"
     :defaultColDef="defaultColDef"
     :theme="myTheme"
-    style="width: 100%; height: 400px"
+    style="width: 100%; height: 250px"
     @grid-ready="onGridReady"
     :getRowClass="getRowClass"
   >
@@ -75,6 +68,6 @@ window.addEventListener('resize', () => {
 </template>
 <style scoped>
 .autoRepair {
-  color: goldenrod !important;
+  background-color: goldenrod !important;
 }
 </style>

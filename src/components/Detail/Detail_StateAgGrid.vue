@@ -28,14 +28,15 @@ const props = defineProps({
     default: () => []
   }
 });
+
 //欄位
 const colDefs = ref([
-  { field: 'ORDER_ID', headerName: '批次', maxWidth: 120 },
-  { field: 'OBJECT_ID', headerName: '設備', maxWidth: 120 },
-  { field: 'ORDER_TYPE', headerName: '指令', maxWidth: 120 },
-  { field: 'ORDER_NAME', headerName: '名稱', flex: 1 },
-  { field: 'LAUNCH_TIME', headerName: '起始時間', maxWidth: 180 },
-  { field: 'DONE_TIME', headerName: '完成時間', maxWidth: 180 }
+  { field: 'ORDER_ID', headerName: '批次', maxWidth: 110 },
+  { field: 'OBJECT_ID', headerName: '設備', maxWidth: 100 },
+  { field: 'ORDER_TYPE', headerName: '指令', maxWidth: 80 },
+  { field: 'ORDER_NAME', headerName: '名稱', maxWidth: 150 },
+  { field: 'LAUNCH_TIME', headerName: '起始時間', maxWidth: 160 },
+  { field: 'DONE_TIME', headerName: '完成時間', maxWidth: 160 }
 ]);
 
 // 預設欄位功能
@@ -49,13 +50,18 @@ const defaultColDef = ref({
 const onGridReady = async (params) => {
   window.unDoneAgGridApi = params.api;
   // 自動調整 Grid 大小
-  window.unDoneAgGridApi.sizeColumnsToFit();
 };
 
-// 當螢幕大小發生變化，agGrid 自動調整大小
-window.addEventListener('resize', () => {
-  window?.unDoneAgGridApi.sizeColumnsToFit();
-});
+const getRowStyle = (params) => {
+  if (params.data.DONE_TIME == '') {
+    return { backgroundColor: '#399d3d' };
+  }
+  return null;
+};
+
+const getRowId = (x) => {
+  return x.data.GUID;
+};
 </script>
 
 <template>
@@ -64,8 +70,10 @@ window.addEventListener('resize', () => {
     :columnDefs="colDefs"
     :defaultColDef="defaultColDef"
     :theme="myTheme"
-    style="width: 100%; height: 400px"
+    style="width: 100%; height: 450px"
     @grid-ready="onGridReady"
+    :getRowId="getRowId"
+    :getRowStyle="getRowStyle"
   >
   </ag-grid-vue>
 </template>
